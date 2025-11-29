@@ -1,0 +1,13 @@
+.barra-principal{
+    background: var(--color-secondary);
+    color: var(--color-text);
+    padding: 5%;
+    display: flex;
+    box-shadow: rgba(201, 189, 189, 0.229) 0px 3px 8px;
+}
+
+.barra-icone img{
+    width: 80%;
+    object-fit:cover;
+    padding: 0;
+}
