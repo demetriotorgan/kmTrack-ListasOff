@@ -5,15 +5,17 @@ import ModalCarregamento from './ModalCarregamento';
 import api from '../api/api';
 import { useSalvarPedagio } from '../hooks/useSalvarPedagio';
 import { useListarPedagio } from '../hooks/useListarPedagio';
+import { useExcluirPedagio } from '../hooks/useExcluirPedagio';
 
 const Pedagio = () => {
 
 const {listarPedagios, setListarPedagios, carregando, carregarPedagios} = useListarPedagio();
 const { salvarPedagio, handleDadosPedagio, dadosPedagio, setDadosPedagio, salvando} = useSalvarPedagio({setListarPedagios});
+const {excluindo, handleExcluir} = useExcluirPedagio({setListarPedagios});
 
   return (
     <>
-    {salvando && (<ModalCarregamento label='Salvando' />)}
+    {(salvando || excluindo) && (<ModalCarregamento label={salvando ? 'Salvando' : 'Excluindo'} />)}
     <div className='container'>
       <h2>Salvar Pedágio</h2>
       <label>
@@ -54,7 +56,7 @@ const { salvarPedagio, handleDadosPedagio, dadosPedagio, setDadosPedagio, salvan
             <p className="titulo-trecho">{item.local}</p>
             <p><strong>Valor:</strong> {item.valor} R$</p>            
             <p><strong>Data:</strong> {isoToDate(item.data)}</p>
-            <button className='botao-atencao'>Excluir <Trash2 /></button>
+            <button className='botao-atencao' onClick={()=>handleExcluir(item)}>Excluir <Trash2 /></button>
             <button className='botao-secundario'>Editar <Pencil /></button>
           </div>
         ))}

@@ -10,6 +10,14 @@ export function useEditarTrecho({setDadosTrecho, dadosTrecho,setListarTrechos,tr
     const [idEditado, setIdEditado] = useState('');
 
     const handleEditando = (item)=>{
+      // ▶️ 1. Verificação imediata OFFLINE
+      if (!navigator.onLine) {
+        alert(
+          "❌ Você está offline.\nA exclusão só pode ser realizada quando a conexão estiver ativa."
+        );
+        return;
+      }
+      
     setEditando(true);
 
     setDadosTrecho({
@@ -23,6 +31,7 @@ export function useEditarTrecho({setDadosTrecho, dadosTrecho,setListarTrechos,tr
   };
 
   const handleAtualizarTrecho = async(idEditado)=>{
+    
     const confirmar = window.confirm('Deseja salvar atualização?');
     if(!confirmar) return
 

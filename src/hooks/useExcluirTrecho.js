@@ -6,6 +6,14 @@ export function useExcluirTrecho({setListarTrechos}){
 
     const handleExcluir = async(item)=>{
     try {
+       // ▶️ 1. Verificação imediata OFFLINE
+      if (!navigator.onLine) {
+        alert(
+          "❌ Você está offline.\nA exclusão só pode ser realizada quando a conexão estiver ativa."
+        );
+        return;
+      }
+      
       const confirmar = window.confirm('Deseja realmente excluir o registro?');
       if(!confirmar) return;
 
