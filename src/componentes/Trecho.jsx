@@ -1,17 +1,20 @@
-import React, { useState } from 'react'
-import {dateToIso, hhmmToIso} from '../util/time'
-import { Map, Save } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import '../style/Trecho.css'
+import {dateToIso, hhmmToIso, isoToHHMM} from '../util/time'
+import { Map, Save, Trash2 } from 'lucide-react'
 import api from '../api/api'
 import { useSalvarTrecho } from '../hooks/useSalvarTrecho'
 import ModalCarregamento from './ModalCarregamento'
+import { useListarTrechos } from '../hooks/useListarTrechos'
 
-const Trecho = () => {
+const Trecho = () => { 
 
   const { dadosTrecho, setDadosTrecho, handleDadosTrecho, salvarTrecho,salvando } = useSalvarTrecho();
-
+  const { listarTrechos, setListarTrechos, carregando} = useListarTrechos();
+  
   return (
      <>
-     {salvando && (<ModalCarregamento label={'Salvando'} />)}    
+     {salvando && (<ModalCarregamento label='Salvando' />)} 
 
     <div className='container'>
         <h2>Novo Trecho <Map /></h2>
@@ -63,19 +66,19 @@ const Trecho = () => {
         <button className='botao-principal' onClick={salvarTrecho}>Salvar <Save /></button>
     </div>
      
-    {/* <div className="container">
-        {carregando && (<ModalCarregandoDados />)}
+    <div className="container">
+        {carregando && (<ModalCarregamento label='Carregando' />)}
       <h2>Trechos Salvos</h2>
-      {Array.isArray(listaTrechos) && listaTrechos.map((item, index) => (
+      {Array.isArray(listarTrechos) && listarTrechos.map((item, index) => (
         <div className="card-trecho" key={index}>
           <p className="titulo-trecho">{item.nomeTrecho}</p>
           <p><strong>Distância:</strong> {item.distancia} km</p>
-          <p><strong>Início:</strong> {item.inicio}</p>
-          <p><strong>Fim:</strong> {item.fim}</p>
-          <button className='botao-atencao' onClick={()=> handleExcluir(item)}>Excluir <Trash2 /></button>
+          <p><strong>Início:</strong> {isoToHHMM(item.inicio)}</p>
+          <p><strong>Fim:</strong> {isoToHHMM(item.fim)}</p>
+          <button className='botao-atencao'>Excluir <Trash2 /></button>
         </div>    
       ))}
-    </div> */}
+    </div>
     </>
   )
 }

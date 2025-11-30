@@ -1,0 +1,47 @@
+.card-trecho {
+  background: #ffffff;
+  padding: 16px 20px;
+  margin: 12px 0;
+  border-radius: 12px;
+
+  /* sombra suave */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+  /* layout interno */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  /* transição para hover */
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.card-trecho:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.card-trecho strong {
+  font-weight: 600;
+  color: #222;
+}
+
+.card-trecho p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* Se quiser um título destacado */
+.card-trecho .titulo-trecho {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.lista-off{
+  display: flex;
+  justify-content: center;
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+}
