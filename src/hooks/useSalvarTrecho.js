@@ -73,6 +73,7 @@ const criarPayload = () => ({
         setDadosTrecho,
         handleDadosTrecho,
         salvarTrecho,
-        salvando
+        salvando,
+        trechoInicial
     };
 }
