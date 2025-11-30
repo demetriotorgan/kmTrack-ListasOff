@@ -2,7 +2,7 @@ import { useState } from "react";
 import { dateToIso, hhmmToIso } from "../util/time";
 import api from "../api/api";
 
-export function useSalvarTrecho(){
+export function useSalvarTrecho({setListarTrechos}){
 const trechoInicial = {
     nomeTrecho: "",
     distancia: "",
@@ -54,10 +54,12 @@ const criarPayload = () => ({
 
     try {
     setSalvando(true);
-      const response = await api.post('/salvar-trecho', criarPayload());
+    const payload = criarPayload();
+      const response = await api.post('/salvar-trecho', payload);
       console.log(response.data);
       alert('Registro salvo com sucesso');
       setDadosTrecho(trechoInicial);
+      setListarTrechos(prev => [response.data.trecho, ...prev]);
     } catch (error) {
       console.log(error);
     }finally{

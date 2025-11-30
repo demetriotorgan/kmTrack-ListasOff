@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import '../style/Trecho.css'
-import {dateToIso, hhmmToIso, isoToHHMM} from '../util/time'
+import {dateToIso, hhmmToIso, isoToDate, isoToHHMM} from '../util/time'
 import { Map, Save, Trash2 } from 'lucide-react'
 import api from '../api/api'
 import { useSalvarTrecho } from '../hooks/useSalvarTrecho'
 import ModalCarregamento from './ModalCarregamento'
 import { useListarTrechos } from '../hooks/useListarTrechos'
+import { useExcluirTrecho } from '../hooks/useExcluirTrecho'
 
-const Trecho = () => { 
-
-  const { dadosTrecho, setDadosTrecho, handleDadosTrecho, salvarTrecho,salvando } = useSalvarTrecho();
+const Trecho = () => {  
   const { listarTrechos, setListarTrechos, carregando} = useListarTrechos();
-  
+  const { dadosTrecho, setDadosTrecho, handleDadosTrecho, salvarTrecho,salvando } = useSalvarTrecho({setListarTrechos});  
+  const { handleExcluir, excluindo} = useExcluirTrecho({setListarTrechos})
+
   return (
      <>
      {salvando && (<ModalCarregamento label='Salvando' />)} 
@@ -67,7 +68,7 @@ const Trecho = () => {
     </div>
      
     <div className="container">
-        {carregando && (<ModalCarregamento label='Carregando' />)}
+        {(carregando || excluindo) && (<ModalCarregamento label={carregando ? 'Carregando' : 'Excluindo'} />)}
       <h2>Trechos Salvos</h2>
       {Array.isArray(listarTrechos) && listarTrechos.map((item, index) => (
         <div className="card-trecho" key={index}>
@@ -75,7 +76,8 @@ const Trecho = () => {
           <p><strong>Distância:</strong> {item.distancia} km</p>
           <p><strong>Início:</strong> {isoToHHMM(item.inicio)}</p>
           <p><strong>Fim:</strong> {isoToHHMM(item.fim)}</p>
-          <button className='botao-atencao'>Excluir <Trash2 /></button>
+          <p><strong>Data:</strong> {isoToDate(item.data)}</p>
+          <button className='botao-atencao' onClick={()=>handleExcluir(item)}>Excluir <Trash2 /></button>
         </div>    
       ))}
     </div>
