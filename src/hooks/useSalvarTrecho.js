@@ -18,6 +18,26 @@ const handleDadosTrecho =(e)=>{
   setDadosTrecho((prev)=>({...prev,[name]:value}));
 }
 
+const validarCampos = () => {
+    const erros = [];
+
+    if (!dadosTrecho.nomeTrecho.trim()) erros.push("Nome do trecho");
+    if (!dadosTrecho.distancia.trim()) erros.push("Distância");
+    if (!dadosTrecho.inicio.trim()) erros.push("Horário de início");    
+    if (!dadosTrecho.data.trim()) erros.push("Data");
+
+    if (erros.length > 0) {
+      alert(
+        "Preencha os seguintes campos obrigatórios:\n\n" +
+        erros.map((e) => `• ${e}`).join("\n")
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+
 const criarPayload = () => ({
     nomeTrecho: dadosTrecho.nomeTrecho,
     distancia: Number(dadosTrecho.distancia) || 0,
@@ -27,6 +47,8 @@ const criarPayload = () => ({
   });
 
     const salvarTrecho = async()=>{
+    if(!validarCampos()) return;
+
     const confirmar = window.confirm('Deseja realmente salvar este trecho?');
     if(!confirmar) return
 
