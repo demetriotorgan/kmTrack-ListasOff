@@ -2,7 +2,7 @@ import { useState } from "react";
 import { dateToIso, isoToDateEdit } from "../util/time";
 import api from "../api/api";
 
-export function useSalvarPedagio(){
+export function useSalvarPedagio({setListarPedagios}){
     const hoje = new Date().toISOString();
     const pedagioInicial = {
       local:'',
@@ -34,6 +34,7 @@ const salvarTrecho = async()=>{
     const response = await api.post('/salvar-pedagio', payload);
     console.log(response.data);
     alert('Pedágio salvo com sucesso');
+    setListarPedagios((prev) => [response.data.pedagio, ...prev]);
     setDadosPedagio(pedagioInicial);
   } catch (error) {
     console.log(error);
