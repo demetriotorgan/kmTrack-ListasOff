@@ -25,16 +25,8 @@ export default defineConfig({
         orientation: 'portrait',
         start_url: '/',
         icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          },
+          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
@@ -45,10 +37,8 @@ export default defineConfig({
       },
 
       workbox: {
-        // PRECACHE dos arquivos da build
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
 
-        // Cache das requisições da API (quando offline)
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/api'),
@@ -60,7 +50,6 @@ export default defineConfig({
             }
           },
           {
-            // cache de navegação (React Router → SPA)
             urlPattern: ({ request }) => request.mode === 'navigate',
             handler: 'NetworkFirst',
             options: {
@@ -69,19 +58,34 @@ export default defineConfig({
             }
           },
           {
-            // cache de assets estáticos
             urlPattern: /\.(?:js|css|png|svg|ico|jpg|jpeg)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'asset-cache',
-              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 }
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
             }
           }
         ],
 
-        // FALLBACK offline: entrega o index.html ao recarregar
-        navigateFallback: '/index.html'
+        // 🔥 ESSENCIAL PARA RECARREGAR OFFLINE
+        navigateFallback: '/index.html',
+
+        // 🔥 Autoriza quais rotas SPA podem receber fallback
+        navigateFallbackAllowlist: [/^\/$/ , /^\/.*/]
       }
     })
-  ]
+  ],
+
+  // 🔥 Garante fallback no ambiente DEV também
+  server: {
+    fs: {
+      cachedChecks: false
+    },
+    watch: {
+      ignored: ['**/dist/**']
+    }
+  }
 })
