@@ -1,0 +1,76 @@
+import { useState } from "react";
+import { hhmmToIso } from "../util/time";
+import api from "../api/api";
+
+
+export function useSalvarParada(){
+const paradaInicial = {
+  local:'',
+  tipo:'',
+  horaInicio:'',
+  horaFinal:''
+}
+
+const [dadosParada, setDadosParada] = useState(paradaInicial);
+const [salvando, setSalvando] = useState(false);
+
+const handleDadosParada = (e)=>{
+  const {name, value} = e.target;
+  setDadosParada((prev)=>({...prev, [name]:value}));
+};
+
+const criarPayload = ()=>({
+  local: dadosParada.local,
+  tipo: dadosParada.tipo,
+  horaInicio: hhmmToIso(dadosParada.horaInicio),
+  horaFinal: hhmmToIso(dadosParada.horaFinal)
+});
+
+const salvarParada = async()=>{
+const confirmar = window.confirm('Deseja realmente salvar esta parada?');
+if(!confirmar) return;
+
+try {
+  setSalvando(true);
+
+  const payload = criarPayload();
+  console.log('Payload criado: ', payload);
+
+  const response = await api.post('/salvar-parada', payload);  
+  console.log('Resposta da API: ', response);
+
+  if(!response.data.offline){
+    console.log("🟢 [PAG] Salvamento ONLINE concluído");
+    alert('Parada salva com sucesso');
+    setDadosParada(paradaInicial);
+    return;
+  }
+
+  // 🔹 OFFLINE — salvo em IndexedDB via offlineInterceptor
+      if (response.data.offline === true) {
+        console.log("🟠 [PAG] Salvamento OFFLINE");
+
+        const pedagioOffline = {
+          ...payload,
+          _id: "temp-" + Date.now(),
+          offline: true,
+        };
+        alert("Sem conexão! O registro foi salvo offline e será sincronizado automaticamente.");
+
+        setDadosParada(paradaInicial);
+        return;
+      }
+} catch (error) {
+  console.log("❌ [PAG] Erro inesperado:", error);
+  alert("Erro ao salvar pedágio. Veja o console para mais detalhes.");
+}finally{
+  setSalvando(false);
+  }
+};
+    return{
+        salvando,
+        dadosParada,
+        handleDadosParada,
+        salvarParada
+    }
+}
