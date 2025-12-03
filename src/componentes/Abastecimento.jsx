@@ -24,6 +24,7 @@ const Abastecimento = () => {
     } = useSalvarAbastecimento({setList});
   return (
     <>
+    {salvando && (<ModalCarregamento label='Salvando' />)}
     <div className='container'>
       <h2>Novo Abastecimento</h2>
       <label>
