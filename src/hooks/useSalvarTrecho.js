@@ -2,7 +2,8 @@ import { useState } from "react";
 import { dateToIso, hhmmToIso } from "../util/time";
 import api from "../api/api";
 
-export function useSalvarTrecho({ setListarTrechos }) {
+export function useSalvarTrecho({ setList }) {
+
   const trechoInicial = {
     nomeTrecho: "",
     distancia: "",
@@ -14,13 +15,17 @@ export function useSalvarTrecho({ setListarTrechos }) {
   const [dadosTrecho, setDadosTrecho] = useState(trechoInicial);
   const [salvando, setSalvando] = useState(false);
 
-  // ⏺ Atualiza campos do formulário
+  /* ---------------------------------------------
+      Atualiza campos do formulário
+  --------------------------------------------- */
   const handleDadosTrecho = (e) => {
     const { name, value } = e.target;
     setDadosTrecho((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ⏺ Validação simples
+  /* ---------------------------------------------
+      Validação dos campos obrigatórios
+  --------------------------------------------- */
   const validarCampos = () => {
     const erros = [];
 
@@ -36,10 +41,13 @@ export function useSalvarTrecho({ setListarTrechos }) {
       );
       return false;
     }
+
     return true;
   };
 
-  // ⏺ Formata o payload para API ou offline
+  /* ---------------------------------------------
+      Payload padronizado
+  --------------------------------------------- */
   const criarPayload = () => ({
     nomeTrecho: dadosTrecho.nomeTrecho,
     distancia: Number(dadosTrecho.distancia) || 0,
@@ -48,7 +56,9 @@ export function useSalvarTrecho({ setListarTrechos }) {
     data: dateToIso(dadosTrecho.data),
   });
 
-  // ⏺ Opera salvar online / offline
+  /* ---------------------------------------------
+      Salvar online/offline — padrão idêntico ao Pedágio
+  --------------------------------------------- */
   const salvarTrecho = async () => {
     if (!validarCampos()) return;
 
@@ -60,39 +70,34 @@ export function useSalvarTrecho({ setListarTrechos }) {
       const payload = criarPayload();
       const response = await api.post("/salvar-trecho", payload);
 
-      // ===============================
-      // 1) ONLINE → registro real vindo da API
-      // ===============================
+      /* =====================
+         ONLINE
+      ===================== */
       if (!response.data.offline) {
-        alert("Registro salvo com sucesso!");
-
-        // adiciona o trecho oficial retornado pela API
-        setListarTrechos((prev) => [response.data.trecho, ...prev]);
-
+        setList((prev) => [response.data.trecho, ...prev]);
+        alert("Trecho salvo com sucesso!");
         setDadosTrecho(trechoInicial);
         return;
       }
 
-      // ===============================
-      // 2) OFFLINE → interceptado pelo offlineInterceptor
-      // ===============================
-      if (response.data.offline === true) {
-        alert(
-          "Sem conexão! O registro foi salvo offline e será sincronizado automaticamente quando a internet voltar."
-        );
+      /* =====================
+         OFFLINE
+      ===================== */
+      const tempItem = {
+        ...payload,
+        _id: "temp-" + Date.now(),
+        offline: true,
+      };
 
-        const itemOffline = {
-          ...payload,
-          _id: "temp-" + Date.now(), // id para feedback visual
-          offline: true,
-        };
+      setList((prev) => [tempItem, ...prev]);
 
-        setListarTrechos((prev) => [itemOffline, ...prev]);
-        setDadosTrecho(trechoInicial);
-        return;
-      }
+      alert("Sem conexão! O trecho foi salvo offline.");
+
+      setDadosTrecho(trechoInicial);
+
     } catch (error) {
       console.error("Erro ao salvar trecho:", error);
+      alert("Erro ao salvar trecho.");
     } finally {
       setSalvando(false);
     }

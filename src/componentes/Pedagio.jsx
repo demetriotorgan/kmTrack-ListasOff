@@ -1,4 +1,5 @@
 import React from "react";
+import '../style/Pedagio.css'
 import { Save, Trash2 } from "lucide-react";
 import { isoToDate } from "../util/time";
 
@@ -98,9 +99,9 @@ const Pedagio = () => {
         {Array.isArray(list) && list.map((item, index) => (
           <div
             key={item._id || index}
-            className={`card-trecho ${item.offline ? "card-offline" : ""}`}
+            className={`card-pedagio ${item.offline ? "card-offline" : ""}`}
           >
-            <p className="titulo-trecho">{item.local}</p>
+            <p className="titulo-pedagio">{item.local}</p>
             <p><strong>Valor:</strong> {item.valor} R$</p>
             <p><strong>Data:</strong> {isoToDate(item.data)}</p>
 

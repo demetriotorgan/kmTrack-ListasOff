@@ -1,0 +1,66 @@
+/* ================================
+   Cards - Estilo Moderno
+   Adaptado para fundo branco
+   ================================ */
+
+/* Card base */
+.card-pedagio {
+  background: #FFF;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  color: red !important;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  /* sombra suave para fundo claro */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+
+  transition: transform 0.15s ease, 
+              box-shadow 0.2s ease, 
+              border-color 0.3s;
+}
+
+/* Hover */
+.card-pedagio:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
+  border-color: var(--color-primary);
+}
+
+/* Card offline: borda e fundo suave */
+.card-offline {
+  border-color: var(--color-accent);
+  background: #FFF;  
+  color: var(--color-primary);
+}
+
+
+
+/* Título */
+.titulo-pedagio {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+/* Textos gerais */
+.card-pedagio p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--color-primary);
+}
+
+/* Aviso de sincronização */
+.card-pedagio small {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--color-accent);
+  margin-top: 4px;
+}

@@ -1,12 +1,14 @@
 import axios from "axios";
 import { idbService } from "../service/idbService";
-import { STORES } from "../service/offlineInterceptor";
+import { STORES } from "./offlineInterceptor";
 import api from "../api/api";
 
-/**
- * Envia 1 item pendente para a API.
- */
-async function syncSingleItem(item) {
+// -------------------------------
+// Envia um único item pendente
+// -------------------------------
+async function syncSingle(item) {
+  console.log("🟦 [SYNC] Enviando item pendente:", item);
+
   return axios({
     method: item.method,
     url: api.defaults.baseURL + item.endpoint,
@@ -14,62 +16,71 @@ async function syncSingleItem(item) {
   });
 }
 
-/**
- * Sincroniza uma store completa
- */
+// -------------------------------
+// Sincroniza uma store
+// -------------------------------
 export async function syncStore(storeName) {
-  // CORRIGIDO
+  console.group(`🚀 [SYNC] Rodando syncStore para ${storeName}`);
+
   const pendentes = await idbService.listItems(storeName);
+  console.log("📥 [SYNC] Lidos pendentes:", pendentes);
 
   if (!pendentes || pendentes.length === 0) {
     console.log(`⚪ [SYNC] Nenhum item para sincronizar → ${storeName}`);
+    console.groupEnd();
     return;
   }
 
-  console.group(`📤 [SYNC] Iniciando sync da store: ${storeName}`);
-  console.log(`Total pendentes: ${pendentes.length}`);
+  console.log(`📤 [SYNC] Iniciando sync (${pendentes.length} itens)`);
 
   let enviados = 0;
 
   for (const item of pendentes) {
     try {
-      await syncSingleItem(item);
+      const resp = await syncSingle(item);
+      console.log("🟢 [SYNC] Resposta API:", resp.data);
 
-      // CORRIGIDO
       await idbService.removeItem(storeName, item.idTemp);
+
+      const remaining = await idbService.listItems(storeName);
+      console.log("📉 [SYNC] Restante na store:", remaining);
 
       enviados++;
       console.log(`✔ Enviado: ${item.endpoint}`);
+
     } catch (err) {
-      console.warn(`❌ Falha ao enviar: ${item.endpoint}`);
-      console.warn("Motivo:", err.message);
+      console.warn(`❌ Falha ao enviar: ${item.endpoint}`, err.message);
     }
   }
 
+  console.log(`📦 [SYNC] ${enviados}/${pendentes.length} enviados com sucesso (store: ${storeName})`);
   console.groupEnd();
-  console.log(`📦 [SYNC] ${enviados}/${pendentes.length} enviados com sucesso`);
 }
 
-/**
- * Sincroniza todas as stores
- */
+// -------------------------------
+// Sincroniza todas as stores
+// -------------------------------
 export async function syncAll() {
   console.group("🔁 [SYNC] Iniciando sincronização geral…");
 
-  for (const storeName of Object.values(STORES)) {
-    await syncStore(storeName);
+  for (const s of Object.values(STORES)) {
+    await syncStore(s);
   }
 
-  console.groupEnd();
   console.log("✨ [SYNC] Concluído.");
+  console.groupEnd();
+
+  // 🔥 AVISA OS HOOKS PARA RECARREGAR AS LISTAS
+  console.log("♻️ [SYNC] Disparando evento → sync-refresh");
+  window.dispatchEvent(new CustomEvent("sync-refresh"));
 }
 
-/**
- * Listener automático quando volta a internet
- */
+// -------------------------------
+// Inicializar escuta online
+// -------------------------------
 export function initSyncOnReconnect() {
   window.addEventListener("online", () => {
-    console.log("🌐 Conexão restaurada — iniciando sync automático…");
+    console.log("🌐 [SYNC] Evento 'online' detectado — iniciando syncAll()");
     syncAll();
   });
 }

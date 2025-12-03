@@ -1,38 +1,44 @@
 import { useState } from "react";
 import api from "../api/api";
 
-export function useExcluirTrecho({setListarTrechos}){
- const [excluindo, setExcluindo] = useState(false);
+export function useExcluirTrecho({ setList }) {
+  const [excluindo, setExcluindo] = useState(false);
 
-    const handleExcluir = async(item)=>{
+  const handleExcluir = async (item) => {
+    console.log("🗑️ [EXCLUIR] Solicitado para item:", item);
+
     try {
-       // ▶️ 1. Verificação imediata OFFLINE
+      // 🔌 BLOQUEIA EXCLUSÃO OFFLINE
       if (!navigator.onLine) {
         alert(
           "❌ Você está offline.\nA exclusão só pode ser realizada quando a conexão estiver ativa."
         );
         return;
       }
-      
-      const confirmar = window.confirm('Deseja realmente excluir o registro?');
-      if(!confirmar) return;
+
+      const confirmar = window.confirm("Deseja realmente excluir o registro?");
+      if (!confirmar) return;
 
       setExcluindo(true);
+      console.log("📤 [EXCLUIR] Enviando DELETE para API...");
+
       const response = await api.delete(`/deletar-trecho/${item._id}`);
-      console.log(response.data);
-      alert('Registro excluido com sucesso');
-      setListarTrechos(prev => prev.filter(trecho => trecho._id !== item._id));
+
+      console.log("🟢 [EXCLUIR] Resposta da API:", response.data);
+
+      alert("Registro excluído com sucesso");
+
+      // 🔥 ATUALIZA LISTA USANDO O PADRÃO GLOBAL
+      setList((prev) => prev.filter((t) => t._id !== item._id));
     } catch (error) {
-      console.log(error);
-    }finally{
+      console.error("❌ [EXCLUIR] Erro ao excluir:", error);
+    } finally {
       setExcluindo(false);
     }
-    }
+  };
 
-    return{
-        handleExcluir,
-        excluindo,
-
-
-    }
+  return {
+    handleExcluir,
+    excluindo,
+  };
 }

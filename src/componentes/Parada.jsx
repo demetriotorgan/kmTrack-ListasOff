@@ -2,10 +2,18 @@ import React, { useState } from 'react'
 import { Save, Trash2 } from "lucide-react";
 import { useSalvarParada } from '../hooks/useSalvarParada';
 import ModalCarregamento from './ModalCarregamento';
+import { useEntityList } from '../hooks/useEntityList';
 
 const Parada = () => {
 
 const {salvando, dadosParada, handleDadosParada, salvarParada} = useSalvarParada();
+const{
+  data: list,
+  loading,
+  setLocal: setList,
+  refresh: reload
+} = useEntityList("paradas");
+
 
   return (
     <>

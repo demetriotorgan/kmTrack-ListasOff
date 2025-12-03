@@ -1,10 +1,5 @@
-// service/offlineInterceptor.js
-
 import { idbService } from "../service/idbService";
 
-//
-// STORES APENAS PARA PENDÊNCIAS (mutations)
-//
 export const STORES = {
   TRECHO: "trechosPendentes",
   PARADA: "paradasPendentes",
@@ -12,137 +7,90 @@ export const STORES = {
   ABASTECIMENTO: "abastecimentosPendentes",
 };
 
-//
-// Rotas que geram pendências (POST/PUT/DELETE)
-//
-export const ROUTE_TO_STORE = [
-  // Trechos
-  { route: /^\/salvar-trecho/, store: STORES.TRECHO },
-  { route: /^\/editar-trecho/, store: STORES.TRECHO },
-  { route: /^\/deletar-trecho/, store: STORES.TRECHO },
-
-  // Pedágios
-  { route: /^\/salvar-pedagio/, store: STORES.PEDAGIO },
-  { route: /^\/editar-pedagio/, store: STORES.PEDAGIO },
-  { route: /^\/deletar-pedagio/, store: STORES.PEDAGIO },
-
-  // Paradas
-  { route: /^\/salvar-parada/, store: STORES.PARADA },
-  { route: /^\/editar-parada/, store: STORES.PARADA },
-  { route: /^\/deletar-parada/, store: STORES.PARADA },
-
-  // Abastecimentos
-  { route: /^\/salvar-abastecimento/, store: STORES.ABASTECIMENTO },
-  { route: /^\/editar-abastecimento/, store: STORES.ABASTECIMENTO },
-  { route: /^\/deletar-abastecimento/, store: STORES.ABASTECIMENTO },
+export const ROUTES = [
+  { r: /^\/salvar-trecho/, store: STORES.TRECHO },
+  { r: /^\/salvar-parada/, store: STORES.PARADA },
+  { r: /^\/salvar-pedagio/, store: STORES.PEDAGIO },
+  { r: /^\/salvar-abastecimento/, store: STORES.ABASTECIMENTO },
 ];
 
-//
-// Mapa de /listar-* → para cache local
-//
-function mapListRouteToStore(url) {
-  if (url.includes("/listar-trecho")) return "cacheTrechos";
-  if (url.includes("/listar-parada")) return "cacheParadas";
-  if (url.includes("/listar-pedagio")) return "cachePedagios";
-  if (url.includes("/listar-abastecimento")) return "cacheAbastecimentos";
+function findStore(url) {
+  const clean = url.replace(window.location.origin, "");
+  return ROUTES.find(r => clean.match(r.r))?.store || null;
+}
+
+function listStore(url) {
+  if (url.includes("listar-trechos")) return "cacheTrechos";
+  if (url.includes("listar-parada")) return "cacheParadas";
+  if (url.includes("listar-pedagio")) return "cachePedagios";
+  if (url.includes("listar-abastecimento")) return "cacheAbastecimentos";
   return null;
 }
 
-//
-// Descobrir qual store registrar a pendência
-//
-function identifyStore(url) {
-  const clean = url.replace(window.location.origin, "");
-  const match = ROUTE_TO_STORE.find((item) => clean.match(item.route));
-  return match?.store ?? null;
-}
-
-//
-// Interceptor principal
-//
 export default function setupOfflineInterceptor(api) {
-  //
-  // REQUEST INTERCEPTOR
-  //
-  api.interceptors.request.use(async (config) => {
-    const isMutation = ["post", "put", "delete"].includes(config.method);
-    const isListGet = config.method === "get" && /\/listar-/.test(config.url);
 
-    // 🔸 GET /listar-* offline → retornar cache imediatamente
-    if (!navigator.onLine && isListGet) {
-      const store = mapListRouteToStore(config.url);
-      if (store) {
-        const cached = await idbService.listItems(store);
-        console.log(`📦 GET OFFLINE (${store}) → retornando cache`);
-        return Promise.reject({
-          offlineGet: true,
-          cachedData: cached,
-        });
-      }
-      return config;
+  // ============================
+  // REQUEST INTERCEPTOR
+  // ============================
+  api.interceptors.request.use(async (config) => {
+    console.log("📤 [REQUEST]", config.method.toUpperCase(), "→", config.url);
+
+    const method = config.method;
+
+    // GET offline → retornar cache
+    if (method === "get" && /\/listar-/.test(config.url) && !navigator.onLine) {
+      const store = listStore(config.url);
+      const cached = await idbService.listItems(store);
+
+      console.warn("📦 [OFFLINE-LIST] Sem conexão → devolvendo cache da store:", store);
+      return Promise.reject({ offlineList: true, cached });
     }
 
-    // 🔸 Se não for mutation → deixar passar normal
-    if (!isMutation) return config;
+    // POST/PUT/DELETE offline → armazenar pendência
+    if (!navigator.onLine && ["post", "put", "delete"].includes(method)) {
+      const store = findStore(config.url);
 
-    // 🔸 Se estiver online → mutation passa normalmente
-    if (navigator.onLine) return config;
+      if (store) {
+        const item = {
+          idTemp: crypto.randomUUID(),
+          method,
+          endpoint: config.url,
+          body: config.data,
+          timestamp: new Date().toISOString(),
+        };
 
-    // 🔸 Offline mutation → guardar no IDB
-    const store = identifyStore(config.url);
-    if (!store) return config;
+        await idbService.saveItem(store, item);
 
-    const payload = {
-      idTemp: crypto.randomUUID(),
-      method: config.method,
-      endpoint: config.url.replace(window.location.origin, ""),
-      body: config.data ?? null,
-      timestamp: new Date().toISOString(),
-    };
+        console.warn("🟥 [OFFLINE-MUTATION] Operação salva offline em", store, item);
+        return Promise.reject({ offlineMutation: true });
+      }
+    }
 
-    await idbService.saveItem(store, payload);
-
-    console.log("💾 Mutation offline registrada:", payload);
-
-    // Bloqueia request real e sinaliza offline
-    return Promise.reject({
-      offlineStored: true,
-    });
+    return config;
   });
 
-  //
+  // ============================
   // RESPONSE INTERCEPTOR
-  //
+  // ============================
   api.interceptors.response.use(
-    async (response) => {
-      const url = response.config?.url;
-      const method = response.config?.method;
-
-      // 🔸 SE FOR GET online → atualizar cache local
-      if (method === "get" && /\/listar-/.test(url)) {
-        const store = mapListRouteToStore(url);
-        if (store) {
-          console.log(`💾 Atualizando cache (${store}) a partir da API`);
-          await idbService.replaceAll(store, response.data);
-        }
-      }
-
-      return response;
+    (res) => {
+      console.log("📩 [RESPONSE]", res.config.url, res.data);
+      return res;
     },
+    (err) => {
+      console.warn("❗ [RESPONSE-ERROR] Interceptado", err);
 
-    // 🔸 TRATAMENTO DE ERROS
-    async (error) => {
-      // GET offline retornando cache
-      if (error.offlineGet) {
-        return Promise.resolve({ data: error.cachedData });
+      if (err.offlineList) {
+        console.log("📦 [RESPONSE] Entregando cache offline");
+        return Promise.resolve({ data: err.cached });
       }
 
-      // Mutation armazenada offline
-      if (error.offlineStored) {
+      if (err.offlineMutation) {
+        console.log("🟠 [RESPONSE] Marca offline → operação salva nos pendentes");
         return Promise.resolve({ data: { offline: true } });
       }
 
-      return Promise.reject(error);
+      return Promise.reject(err);
     }
   );
 }

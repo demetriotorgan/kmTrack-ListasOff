@@ -30,7 +30,7 @@ export function useSalvarPedagio({ setList }) {
     if (erros.length > 0) {
       alert(
         "Preencha os seguintes campos obrigatórios:\n\n" +
-          erros.map((e) => `• ${e}`).join("\n")
+        erros.map((e) => `• ${e}`).join("\n")
       );
       return false;
     }
@@ -45,67 +45,54 @@ export function useSalvarPedagio({ setList }) {
   });
 
   const salvarPedagio = async () => {
-    console.log("🟦 [PAG] Iniciando fluxo salvarPedagio()");
+    if (!validarCampos()) return;
 
-    if (!validarCampos()) {
-      console.log("❌ [PAG] Campos inválidos");
-      return;
-    }
-
-    const confirmar = window.confirm("Deseja realmente salvar este pedágio?");
-    if (!confirmar) return;
+    if (!window.confirm("Deseja realmente salvar este pedágio?")) return;
 
     try {
       setSalvando(true);
 
       const payload = criarPayload();
-      console.log("📦 [PAG] Payload criado:", payload);
-
       const response = await api.post("/salvar-pedagio", payload);
-      console.log("🌐 [PAG] Resposta da API:", response);
 
-      // 🔹 ONLINE — API retornou registro criado normalmente
+      /* =====================
+         ONLINE
+      ===================== */
       if (!response.data.offline) {
-        console.log("🟢 [PAG] Salvamento ONLINE concluído");
-
-        setList((prev) => [response.data.pedagio, ...prev]);
+        setList(prev => [response.data.pedagio, ...prev]);
         alert("Pedágio salvo com sucesso!");
         setDadosPedagio(pedagioInicial);
         return;
       }
 
-      // 🔹 OFFLINE — salvo em IndexedDB via offlineInterceptor
-      if (response.data.offline === true) {
-        console.log("🟠 [PAG] Salvamento OFFLINE");
+      /* =====================
+         OFFLINE
+      ===================== */
+      const tempItem = {
+        ...payload,
+        _id: "temp-" + Date.now(),
+        offline: true
+      };
 
-        const pedagioOffline = {
-          ...payload,
-          _id: "temp-" + Date.now(),
-          offline: true,
-        };
+      setList(prev => [tempItem, ...prev]);
 
-        setList((prev) => [pedagioOffline, ...prev]);
+      alert("Sem conexão! O registro foi salvo offline.");
 
-        alert("Sem conexão! O registro foi salvo offline e será sincronizado automaticamente.");
-
-        setDadosPedagio(pedagioInicial);
-        return;
-      }
+      setDadosPedagio(pedagioInicial);
 
     } catch (error) {
-      console.log("❌ [PAG] Erro inesperado:", error);
-      alert("Erro ao salvar pedágio. Veja o console para mais detalhes.");
+      console.error("Erro ao salvar pedágio:", error);
+      alert("Erro ao salvar pedágio.");
     } finally {
       setSalvando(false);
-      console.log("🟨 [PAG] Salvamento finalizado");
     }
   };
 
   return {
-    salvarPedagio,
-    handleDadosPedagio,
     dadosPedagio,
     setDadosPedagio,
+    handleDadosPedagio,
+    salvarPedagio,
     salvando,
     pedagioInicial,
   };
