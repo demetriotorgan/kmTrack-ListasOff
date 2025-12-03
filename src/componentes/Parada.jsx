@@ -5,8 +5,10 @@ import { useSalvarParada } from '../hooks/useSalvarParada';
 import ModalCarregamento from './ModalCarregamento';
 import { useEntityList } from '../hooks/useEntityList';
 import { isoToDate } from '../util/time';
+import api from '../api/api';
+import { useExcluirParada } from '../hooks/useExcluirParada';
 
-const Parada = () => {
+const Parada = () => {  
 
 const{
   data: list,
@@ -21,13 +23,12 @@ const {
   handleDadosParada, 
   salvarParada} = useSalvarParada({setList});
 
-const handleExcluir = async(item)=>{
-
-}
+const {excluindo,
+      handleExcluir} = useExcluirParada({setList})
 
   return (
     <>
-    {salvando && (<ModalCarregamento label='Salvando' />)}
+    {(salvando || excluindo) && (<ModalCarregamento label={salvando ? 'Salvando' : 'Excluindo'} />)}
 
     <div className='container'>
       <h2>Cadastrar Parada</h2>
