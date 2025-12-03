@@ -1,0 +1,92 @@
+
+
+/* Card dos trechos recentes*/
+.card-recente {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  padding: 1.2rem;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease-in-out;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+
+/* Nome do trecho em destaque */
+.titulo-recente {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 .4rem 0;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+/* Informações secundárias */
+.info-recente {
+  font-size: .95rem;
+  color: var(--color-text);
+  opacity: .9;
+  margin: .2rem 0;
+}
+
+.trecho-total {  
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-weight: 700;
+  font-size: 0.95rem; /* menor */
+  padding: 0.4rem 0.8rem; /* menor */
+  border-radius: 6px;
+  display: inline-block;
+  margin: 0.5rem 0;
+  border: 1px solid var(--color-border);
+  letter-spacing: 0.5px;
+}
+
+.offline-msg {
+  background: var(--color-secondary);
+  color: var(--color-accent);
+  padding: 10px 14px;
+  margin: 12px auto;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border-radius: 6px;
+  border: 1px solid var(--color-accent);
+  width: fit-content;
+  max-width: 300px;
+  display: block;
+  box-shadow: 0 0 8px rgba(255, 204, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+
+/* Animação ao aparecer */
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Efeito no hover (opcional) */
+.trecho-total:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+  cursor: default;
+}
+
+
+/* Animação para entrada suave */
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

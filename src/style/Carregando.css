@@ -1,0 +1,26 @@
+.carregando-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.carregando-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-secondary);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.carregando-label {
+  font-size: 0.95em;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
