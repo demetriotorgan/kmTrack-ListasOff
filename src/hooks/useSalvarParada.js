@@ -3,7 +3,7 @@ import { hhmmToIso } from "../util/time";
 import api from "../api/api";
 
 
-export function useSalvarParada(){
+export function useSalvarParada({setList}){
 const paradaInicial = {
   local:'',
   tipo:'',
@@ -41,6 +41,7 @@ try {
 
   if(!response.data.offline){
     console.log("🟢 [PAG] Salvamento ONLINE concluído");
+    setList(prev => [response.data.parada, ...prev]);
     alert('Parada salva com sucesso');
     setDadosParada(paradaInicial);
     return;
@@ -55,10 +56,12 @@ try {
           _id: "temp-" + Date.now(),
           offline: true,
         };
+
+        setList(prev => [pedagioOffline, ...prev]);
+
         alert("Sem conexão! O registro foi salvo offline e será sincronizado automaticamente.");
 
-        setDadosParada(paradaInicial);
-        return;
+        setDadosParada(paradaInicial);        
       }
 } catch (error) {
   console.log("❌ [PAG] Erro inesperado:", error);

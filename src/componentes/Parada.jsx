@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
+import '../style/Parada.css'
 import { Save, Trash2 } from "lucide-react";
 import { useSalvarParada } from '../hooks/useSalvarParada';
 import ModalCarregamento from './ModalCarregamento';
 import { useEntityList } from '../hooks/useEntityList';
+import { isoToDate } from '../util/time';
 
 const Parada = () => {
 
-const {salvando, dadosParada, handleDadosParada, salvarParada} = useSalvarParada();
 const{
   data: list,
   loading,
@@ -14,6 +15,15 @@ const{
   refresh: reload
 } = useEntityList("paradas");
 
+const {
+  salvando, 
+  dadosParada, 
+  handleDadosParada, 
+  salvarParada} = useSalvarParada({setList});
+
+const handleExcluir = async(item)=>{
+
+}
 
   return (
     <>
@@ -64,6 +74,42 @@ const{
       </label>
       <button className='botao-principal' onClick={salvarParada}>Salvar <Save /></button>
     </div>
+    {/* =================================================== */}
+      {/* LISTA DE Paradas */}
+      {/* =================================================== */}
+
+      <div className="container">
+
+        {loading && <ModalCarregamento label="Carregando" />}
+
+        <h2>Pedágios Salvos</h2>
+
+        {Array.isArray(list) && list.map((item, index) => (
+          <div
+            key={item._id || index}
+            className={`card-parada ${item.offline ? "card-offline" : ""}`}
+          >
+            <p className="titulo-parada">{item.local}</p>
+            <p><strong>Local:</strong> {item.local}</p>
+            <p><strong>Tipo:</strong> {item.tipo}</p>
+            <p><strong>Hora de Início:</strong> {isoToDate(item.horaInicio)}</p>
+            <p><strong>Hora de Final:</strong> {isoToDate(item.horaFinal)}</p>
+
+            <button
+              className="botao-atencao"
+              onClick={()=>handleExcluir(item)}
+            >
+              Excluir <Trash2 />
+            </button>
+
+            {item.offline && (
+              <small style={{ color: "orange" }}>
+                Aguardando sincronização...
+              </small>
+            )}
+          </div>
+        ))}
+      </div>
     </>
   )
 }
