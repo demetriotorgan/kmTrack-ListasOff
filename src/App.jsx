@@ -11,6 +11,9 @@ import StatusConexao from './componentes/StatusConexao'
 import { useTrechoRecentes } from './hooks/useTrechoRecentes'
 import TrechosRecentes from './componentes/TrechosRecentes'
 import { useOnlineStatus } from './hooks/useOnlineStatus'
+import PedagiosRecentes from './componentes/PedagiosRecentes'
+import ParadasRecentes from './componentes/ParadasRecentes'
+import AbastecimentosRecentes from './componentes/AbastecimentosRecentes'
 
 function App() {
   const [selected, setSelected] = useState(''); 
@@ -34,10 +37,15 @@ function App() {
       {selected === 'abastecimento' && <Abastecimento />}
 
       {online && selected === '' && (
-        <TrechosRecentes 
+        <>
+      <TrechosRecentes 
       trechos={trechos}
       carregando={carregando}
       />
+      <PedagiosRecentes />
+      <ParadasRecentes />
+      <AbastecimentosRecentes />
+      </>
       )}
       
       {!online && selected === '' && (

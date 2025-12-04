@@ -1,6 +1,6 @@
 import React from "react";
 import '../style/Pedagio.css'
-import { Save, Trash2 } from "lucide-react";
+import { Save, Trash2, HandCoins } from "lucide-react";
 import { isoToDate } from "../util/time";
 
 import ModalCarregamento from "./ModalCarregamento";
@@ -45,7 +45,7 @@ const Pedagio = () => {
       {/* =================================================== */}
 
       <div className="container">
-        <h2>Salvar Pedágio</h2>
+        <h2><HandCoins /> Salvar Pedágio</h2>
 
         <label>
           Local
