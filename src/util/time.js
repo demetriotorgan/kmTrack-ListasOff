@@ -62,3 +62,33 @@ export function isoToDateEdit(iso) {
 
   return `${yyyy}-${mm}-${dd}`;
 }
+
+export function duracaoFormatada(inicio, fim) {
+  try {
+    if (!inicio) return "Sem horário de partida";
+    if (!fim) return "Aguardando finalização";
+
+    const inicioDate = new Date(inicio);
+    const fimDate = new Date(fim);
+
+    if (isNaN(inicioDate) || isNaN(fimDate)) {
+      return "Horários inválidos";
+    }
+
+    const diffMs = fimDate - inicioDate;
+    if (diffMs < 0) {
+      return "Horário inconsistente";
+    }
+
+    const diffISO = new Date(diffMs).toISOString();
+    const formatado = isoToHHMM(diffISO);
+
+    if (!formatado) return "Duração indisponível";
+
+    return `${formatado} horas`;
+
+  } catch (error) {
+    console.warn("Erro ao calcular duração:", error);
+    return "Erro ao calcular";
+  }
+}

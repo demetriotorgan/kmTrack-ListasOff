@@ -64,6 +64,22 @@
   letter-spacing: 0.5px;
 }
 
+.info-duracao {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 6px 10px;
+  margin-top: 8px;
+  border-left: 4px solid #007bff; /* cor de destaque */
+  border-radius: 4px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.info-duracao strong {
+  color: #0056b3; /* tom mais escuro do destaque */
+  margin-right: 4px;
+}
+
+
 
 /* Animação ao aparecer */
 @keyframes popIn {

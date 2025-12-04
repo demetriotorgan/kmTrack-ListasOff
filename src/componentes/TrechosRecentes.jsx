@@ -1,8 +1,16 @@
 import React from 'react'
 import Carregando from './Carregando'
-import { Save, Trash2, Map } from "lucide-react";
+import { Flag, Map, Timer  } from "lucide-react";
+import { duracaoFormatada, isoToHHMM } from '../util/time';
 
 const TrechosRecentes = ({trechos, carregando}) => {
+
+  // ⛔ Só mostra enquanto não está carregando e não tem dados
+  if (!carregando && (!trechos?.ultimosTrechos || trechos.ultimosTrechos.length === 0)) {
+    return null;
+  }
+
+
   return (
     <div className='container'>
         {carregando && <Carregando label='Carregando' />}
@@ -11,9 +19,14 @@ const TrechosRecentes = ({trechos, carregando}) => {
 
         {trechos?.ultimosTrechos?.map((item, index) => (
           <div className="card-recente" key={index}>
-            <p className="titulo-recente">{item.nomeTrecho}</p>
+            <p className="titulo-recente"><Flag /> {item.nomeTrecho}</p>
             <p className="info-recente"><strong>Distância:</strong> {item.distancia} km</p>
-            <p className="info-recente"><strong>Data:</strong> {new Date(item.data).toLocaleDateString()}</p>
+            <p className='info-recente'><strong>Partida:</strong> {isoToHHMM(item.inicio)}</p>
+            <p className='info-recente'><strong>Chegada:</strong> {isoToHHMM(item.fim)}</p>
+            <p className='info-duracao'>
+              <Timer size={16} style={{ marginRight: 6 }} />
+              {duracaoFormatada(item.inicio, item.fim)}
+            </p>
         </div>
         ))}
       </div>

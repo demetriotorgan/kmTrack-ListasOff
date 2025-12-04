@@ -10,29 +10,14 @@ import Trecho from './componentes/Trecho'
 import StatusConexao from './componentes/StatusConexao'
 import { useTrechoRecentes } from './hooks/useTrechoRecentes'
 import TrechosRecentes from './componentes/TrechosRecentes'
+import { useOnlineStatus } from './hooks/useOnlineStatus'
 
 function App() {
   const [selected, setSelected] = useState(''); 
-  const [online, setOnline] = useState(navigator.onLine);
-
+  
   const { trechos,carregando,carregarTrechos} = useTrechoRecentes();
-
-  useEffect(() => {
-   const handleOnline = () => {
-     setOnline(true);
-     carregarTrechos(); // 🔄 Ao voltar a internet, recarrega os trechos automaticamente
-   };
-   const handleOffline = () => setOnline(false);
-
-   window.addEventListener('online', handleOnline);
-   window.addEventListener('offline', handleOffline);
-
-   return () => {
-     window.removeEventListener('online', handleOnline);
-     window.removeEventListener('offline', handleOffline);
-   };
- }, [carregarTrechos]);
-
+  const online = useOnlineStatus(carregarTrechos);
+  
   const handleSelectChange = (value) => {
     setSelected(value);
   };
