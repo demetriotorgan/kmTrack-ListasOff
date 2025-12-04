@@ -9,6 +9,7 @@ import ModalCarregamento from "./ModalCarregamento";
 import { useEntityList } from "../hooks/useEntityList";
 import { useSalvarTrecho } from "../hooks/useSalvarTrecho";
 import { useExcluirTrecho } from "../hooks/useExcluirTrecho";
+import { useEditarTrecho } from "../hooks/useEditarTrecho";
 
 const Trecho = () => {
 
@@ -26,10 +27,12 @@ const Trecho = () => {
      SALVAR TRECHO
   =================================================== */
   const {
-    salvarTrecho,
-    handleDadosTrecho,
     dadosTrecho,
-    salvando
+    setDadosTrecho,
+    handleDadosTrecho,
+    salvarTrecho,
+    salvando,
+    trechoInicial,
   } = useSalvarTrecho({ setList });
 
   /* ===================================================
@@ -39,6 +42,13 @@ const Trecho = () => {
     excluindo,
     handleExcluir
   } = useExcluirTrecho({ setList });
+
+  const {
+  iniciarEdicao,
+    salvarEdicao,
+    editando,
+    salvandoEdicao
+} = useEditarTrecho({ setList, setFormState: setDadosTrecho, trechoInicial });
 
   return (
     <>
@@ -104,10 +114,10 @@ const Trecho = () => {
             onChange={handleDadosTrecho}
           />
         </label>
-
-        <button className="botao-principal" onClick={salvarTrecho}>
-          Salvar
-          <Save />
+        <button
+        className="botao-principal"
+        onClick={editando ? ()=>salvarEdicao(dadosTrecho)  : salvarTrecho}>
+          {editando ? "Editar" : "Salvar"} <Save />
         </button>
       </div>
 
@@ -133,9 +143,14 @@ const Trecho = () => {
 
             <button
               className="botao-atencao"
-              onClick={() => handleExcluir(item)}
-            >
+              onClick={() => handleExcluir(item)}>
               Excluir <Trash2 />
+            </button>
+
+            <button
+              className="botao-secundario"
+              onClick={() => iniciarEdicao(item)}>
+              Editar
             </button>
 
             {item.offline && (

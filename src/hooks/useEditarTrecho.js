@@ -2,119 +2,74 @@ import { useState } from "react";
 import { dateToIso, hhmmToIso, isoToDateEdit, isoToHHMM } from "../util/time";
 import api from "../api/api";
 
-/**
- * useEditarTrecho
- * Edição somente ONLINE (não entra no fluxo offline/IDB)
- */
-export function useEditarTrecho({
-  setDadosTrecho,
-  dadosTrecho,
-  setListarTrechos,
-  trechoInicial
-}) {
+export function useEditarTrecho({ setList, setFormState, trechoInicial }) {
+  
   const [editando, setEditando] = useState(false);
-  const [salvandoEdicao, setSalvandoEdicao] = useState(false);
   const [idEditado, setIdEditado] = useState("");
+  const [salvandoEdicao, setSalvandoEdicao] = useState(false);
 
-  // =======================================================
-  // 1) Usuário escolhe um trecho para editar
-  // =======================================================
-  const handleEditando = (item) => {
-    console.log("✏️ [EDITAR] Abrindo edição para item:", item);
-
-    // 🚫 Verificação imediata OFFLINE
+  // Iniciar modo edição
+  const iniciarEdicao = (item) => {
     if (!navigator.onLine) {
-      console.warn("❌ [EDITAR] Usuário offline — edição bloqueada");
-      alert(
-        "❌ Você está offline.\nA edição só pode ser realizada quando a conexão estiver ativa."
-      );
+      alert("Você está offline! Só é possível editar quando estiver online.");
       return;
     }
 
     setEditando(true);
-
-    // Preenche formulário com dados convertidos
-    setDadosTrecho({
-      nomeTrecho: item.nomeTrecho,
-      distancia: item.distancia,
-      inicio: isoToHHMM(item.inicio),
-      fim: isoToHHMM(item.fim),
-      data: isoToDateEdit(item.data)
-    });
-
     setIdEditado(item._id);
 
-    console.log("🟦 [EDITAR] Formulário preenchido e modo edição ativado");
+    setFormState({
+      nomeTrecho: item.nomeTrecho,
+      distancia: item.distancia,
+      inicio: item.inicio ? isoToHHMM(item.inicio) : "",
+      fim: item.fim ? isoToHHMM(item.fim) : "",
+      data: isoToDateEdit(item.data)
+    });
   };
 
-  // =======================================================
-  // 2) Usuário salva atualização
-  // =======================================================
-  const handleAtualizarTrecho = async () => {
-    console.log("📤 [EDITAR] Solicitado salvar edição do trecho:", idEditado);
-
-    // 🚫 Verificação OFFLINE (segurança dupla)
+  // Salvar atualização
+  const salvarEdicao = async (dadosAtuais) => {
     if (!navigator.onLine) {
-      console.warn("❌ [EDITAR] Tentativa de salvar offline — bloqueado");
-      alert("❌ Você está offline.\nNão é possível salvar alterações agora.");
+      alert("Você está offline! Conecte-se para salvar.");
       return;
     }
 
-    const confirmar = window.confirm("Deseja salvar as alterações?");
-    if (!confirmar) {
-      console.log("⚪ [EDITAR] Usuário cancelou a atualização");
-      return;
-    }
+    if (!window.confirm("Confirmar atualização?")) return;
 
     setSalvandoEdicao(true);
 
-    const payloadEditado = {
-      nomeTrecho: dadosTrecho.nomeTrecho,
-      distancia: dadosTrecho.distancia,
-      inicio: hhmmToIso(dadosTrecho.inicio),
-      fim: hhmmToIso(dadosTrecho.fim),
-      data: dateToIso(dadosTrecho.data)
+    const payload = {
+      nomeTrecho: dadosAtuais.nomeTrecho,
+      distancia: dadosAtuais.distancia,
+      inicio: hhmmToIso(dadosAtuais.inicio),
+      fim: hhmmToIso(dadosAtuais.fim),
+      data: dateToIso(dadosAtuais.data)
     };
 
-    console.log("📦 [EDITAR] Payload preparado:", payloadEditado);
-
     try {
-      const response = await api.put(
-        `/editar-trecho/${idEditado}`,
-        payloadEditado
-      );
+      const { data } = await api.put(`/editar-trecho/${idEditado}`, payload);
 
-      console.log("🟢 [EDITAR] Resposta da API:", response.data);
+      setList(prev => prev.map(item =>
+        item._id === idEditado ? data.trecho : item
+      ));
 
-      alert("Registro atualizado com sucesso!");
-
-      // Atualiza lista local substituindo item editado
-      setListarTrechos((prev) =>
-        prev.map((t) =>
-          t._id === idEditado ? response.data.trecho : t
-        )
-      );
-
-      // Limpa formulário e sai do modo edição
-      setDadosTrecho(trechoInicial);
+      alert("Trecho atualizado!");
       setEditando(false);
       setIdEditado("");
-
-      console.log("📉 [EDITAR] Lista atualizada e modo edição encerrado");
+      setFormState(trechoInicial);
 
     } catch (error) {
-      console.error("❌ [EDITAR] Erro ao salvar edição:", error);
-      alert("Erro ao salvar alterações. Tente novamente.");
+      console.error(error);
+      alert("Erro ao atualizar o trecho!");
     } finally {
       setSalvandoEdicao(false);
     }
   };
 
   return {
-    handleEditando,
-    handleAtualizarTrecho,
+    iniciarEdicao,
+    salvarEdicao,
     editando,
-    salvandoEdicao,
-    idEditado
+    salvandoEdicao
   };
 }
