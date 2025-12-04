@@ -1,6 +1,6 @@
 import React from 'react'
 import Carregando from './Carregando'
-import { Flag, Map, Timer  } from "lucide-react";
+import { Flag, Map, Timer,Gauge   } from "lucide-react";
 import { duracaoFormatada, isoToHHMM } from '../util/time';
 
 const TrechosRecentes = ({trechos, carregando}) => {
@@ -25,7 +25,7 @@ const TrechosRecentes = ({trechos, carregando}) => {
             <p className='info-recente'><strong>Chegada:</strong> {isoToHHMM(item.fim)}</p>
             <p className='info-duracao'>
               <Timer size={16} style={{ marginRight: 6 }} />
-              {duracaoFormatada(item.inicio, item.fim)}
+              {duracaoFormatada(item.inicio, item.fim, item.distancia)}
             </p>
         </div>
         ))}

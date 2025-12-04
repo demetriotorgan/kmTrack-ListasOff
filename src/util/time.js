@@ -63,7 +63,19 @@ export function isoToDateEdit(iso) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-export function duracaoFormatada(inicio, fim) {
+// util/time.js (ou onde você mantém utilitários)
+function pad2(n) {
+  return n.toString().padStart(2, "0");
+}
+
+function minutesToHHMM(totalMinutes) {
+  const horas = Math.floor(totalMinutes / 60);
+  const minutos = Math.floor(totalMinutes % 60);
+  return `${pad2(horas)}:${pad2(minutos)}`;
+}
+
+// função principal exportada
+export function duracaoFormatada(inicio, fim, distancia) {
   try {
     if (!inicio) return "Sem horário de partida";
     if (!fim) return "Aguardando finalização";
@@ -75,18 +87,32 @@ export function duracaoFormatada(inicio, fim) {
       return "Horários inválidos";
     }
 
-    const diffMs = fimDate - inicioDate;
+    const diffMs = fimDate.getTime() - inicioDate.getTime();
     if (diffMs < 0) {
       return "Horário inconsistente";
     }
 
-    const diffISO = new Date(diffMs).toISOString();
-    const formatado = isoToHHMM(diffISO);
+    // converte ms -> minutos totais (arredonda para cima/baixo conforme desejar)
+    const totalMinutes = Math.floor(diffMs / 1000 / 60); // minutos inteiros
+    // Se quiser incluir segundos, pode calcular com Math.round(diffMs/1000/60)
 
-    if (!formatado) return "Duração indisponível";
+    // Formata hh:mm sem tocar em Date/Timezone
+    const hhmm = minutesToHHMM(totalMinutes);
 
-    return `${formatado} horas`;
+    // Calcular velocidade média se distância válida
+    const distanciaNum = Number(distancia);
+    if (!Number.isNaN(distanciaNum) && distanciaNum > 0) {
+      const horas = diffMs / 1000 / 3600; // ms -> horas (float)
+      if (horas > 0) {
+        const velocidade = (distanciaNum / horas).toFixed(2);
+        return `${hhmm} horas • Velocidade média: ${velocidade} km/h`;
+      } else {
+        return `${hhmm} horas • Aguardando dados finais do percurso para calcular velocidade`;
+      }
+    }
 
+    // Apenas duração
+    return `${hhmm} horas`;
   } catch (error) {
     console.warn("Erro ao calcular duração:", error);
     return "Erro ao calcular";
