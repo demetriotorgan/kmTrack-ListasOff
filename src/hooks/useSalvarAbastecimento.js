@@ -1,15 +1,17 @@
 import { useState } from "react";
 import api from "../api/api";
-import { dateToIso } from "../util/time";
+import { dateToIso, isoToDateEdit } from "../util/time";
 
 export function useSalvarAbastecimento({setList}){
+const hojeISO = new Date().toISOString();
+
 const abastecimentoInicial = {
     local: '',
     valor: '',
     litros: '',
     odometro: '',
     valorLitro: '',
-    data:''
+    data: isoToDateEdit(hojeISO)
   }
 
   const [dadosAbastecimento, setDadosAbastecimento] = useState(abastecimentoInicial);

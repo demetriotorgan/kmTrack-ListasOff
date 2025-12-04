@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { hhmmToIso } from "../util/time";
+import { hhmmToIso, isoToHHMM } from "../util/time";
 import api from "../api/api";
 
 
 export function useSalvarParada({setList}){
+const hojeISO = new Date().toISOString();
+
 const paradaInicial = {
   local:'',
   tipo:'',
-  horaInicio:'',
+  horaInicio: isoToHHMM(hojeISO),
   horaFinal:''
 }
 
