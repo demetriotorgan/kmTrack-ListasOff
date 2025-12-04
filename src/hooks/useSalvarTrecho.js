@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { dateToIso, hhmmToIso } from "../util/time";
+import { dateToIso, hhmmToIso, isoToDateEdit, isoToHHMM } from "../util/time";
 import api from "../api/api";
 
 export function useSalvarTrecho({ setList }) {
+const hojeISO = new Date().toISOString();
 
   const trechoInicial = {
     nomeTrecho: "",
     distancia: "",
-    inicio: "",
+    inicio: isoToHHMM(hojeISO),
     fim: "",
-    data: "",
+    data: isoToDateEdit(hojeISO),
   };
 
   const [dadosTrecho, setDadosTrecho] = useState(trechoInicial);
