@@ -33,14 +33,14 @@ function App() {
       {selected === 'pedagio' && <Pedagio />}
       {selected === 'abastecimento' && <Abastecimento />}
 
-      {online && (
+      {online && selected === '' && (
         <TrechosRecentes 
       trechos={trechos}
       carregando={carregando}
       />
       )}
       
-      {!online && (
+      {!online && selected === '' && (
          <p className="offline-msg">Sem conexão — dados recentes indisponíveis</p>
       )}
       <Footer />
