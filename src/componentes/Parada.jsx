@@ -4,7 +4,7 @@ import { Save, Trash2 } from "lucide-react";
 import { useSalvarParada } from '../hooks/useSalvarParada';
 import ModalCarregamento from './ModalCarregamento';
 import { useEntityList } from '../hooks/useEntityList';
-import { isoToDate } from '../util/time';
+import { isoToDate, isoToHHMM } from '../util/time';
 import api from '../api/api';
 import { useExcluirParada } from '../hooks/useExcluirParada';
 
@@ -83,7 +83,7 @@ const {excluindo,
 
         {loading && <ModalCarregamento label="Carregando" />}
 
-        <h2>Pedágios Salvos</h2>
+        <h2>Paradas Salvas</h2>
 
         {Array.isArray(list) && list.map((item, index) => (
           <div
@@ -93,8 +93,8 @@ const {excluindo,
             <p className="titulo-parada">{item.local}</p>
             <p><strong>Local:</strong> {item.local}</p>
             <p><strong>Tipo:</strong> {item.tipo}</p>
-            <p><strong>Hora de Início:</strong> {isoToDate(item.horaInicio)}</p>
-            <p><strong>Hora de Final:</strong> {isoToDate(item.horaFinal)}</p>
+            <p><strong>Hora de Início:</strong> {isoToHHMM(item.horaInicio)}</p>
+            <p><strong>Hora de Final:</strong> {isoToHHMM(item.horaFinal)}</p>
 
             <button
               className="botao-atencao"

@@ -16,12 +16,16 @@ import ParadasRecentes from './componentes/ParadasRecentes'
 import AbastecimentosRecentes from './componentes/AbastecimentosRecentes'
 import { subscribeRefresh } from './util/refreshEvent'
 import { usePedagiosRecentes } from './hooks/usePedagiosRecentes'
+import api from './api/api'
+import { useParadasRecentes } from './hooks/useParadasRecentes'
 
 function App() {
   const [selected, setSelected] = useState(''); 
   
+  
   const { trechos,carregando,carregarTrechos} = useTrechoRecentes();
   const {pedagios, carregandoPedagios, carregarPedagios} = usePedagiosRecentes();
+  const {paradas, carregandoParadas, carregarParadas} = useParadasRecentes();
 
   const online = useOnlineStatus(carregarTrechos);
   
@@ -33,9 +37,11 @@ function App() {
   const unsub = subscribeRefresh(() => {
     carregarTrechos();
     carregarPedagios();
+    carregarParadas();
   });
   return unsub;
-}, [carregarTrechos,carregarPedagios]);
+}, [carregarTrechos,carregarPedagios,carregarParadas]);
+
 
   return (
     <>
@@ -60,7 +66,11 @@ function App() {
       carregandoPedagios={carregandoPedagios}      
       />
 
-      <ParadasRecentes />
+      <ParadasRecentes 
+      paradas={paradas}
+      carregandoParadas={carregandoParadas}
+      />
+
       <AbastecimentosRecentes />
       </>
       )}

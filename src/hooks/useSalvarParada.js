@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { hhmmToIso, isoToHHMM } from "../util/time";
 import api from "../api/api";
+import { triggerRefresh } from "../util/refreshEvent";
 
 
 export function useSalvarParada({setList}){
@@ -39,6 +40,8 @@ try {
   console.log('Payload criado: ', payload);
 
   const response = await api.post('/salvar-parada', payload);  
+  triggerRefresh();
+  
   console.log('Resposta da API: ', response);
 
   if(!response.data.offline){

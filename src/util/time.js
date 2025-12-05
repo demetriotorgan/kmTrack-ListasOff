@@ -118,3 +118,25 @@ export function duracaoFormatada(inicio, fim, distancia) {
     return "Erro ao calcular";
   }
 }
+
+export function duracaoParada(horaInicio, horaFinal) {
+  if (!horaInicio || !horaFinal) return "Dados indisponíveis";
+
+  const inicio = new Date(horaInicio);
+  const fim = new Date(horaFinal);
+
+  if (isNaN(inicio.getTime()) || isNaN(fim.getTime())) {
+    return "Dados indisponíveis";
+  }
+
+  let diff = fim - inicio; // diferença em milissegundos
+
+  if (diff < 0) return "Dados indisponíveis"; // evita valores invertidos
+
+  const totalMin = Math.floor(diff / 1000 / 60);
+  const horas = Math.floor(totalMin / 60);
+  const minutos = totalMin % 60;
+
+  // Formata HH:MM sempre com 2 dígitos
+  return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`;
+}
