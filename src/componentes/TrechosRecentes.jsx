@@ -3,6 +3,7 @@ import Carregando from './Carregando'
 import { Flag, Map, Timer,MapPinCheckInside  } from "lucide-react";
 import { duracaoFormatada, hhmmToIso, isoToHHMM } from '../util/time';
 import api from '../api/api';
+import { useEncerrarTrecho } from '../hooks/useEncerrarTrecho';
 
 const TrechosRecentes = ({trechos, carregando, onAtualizarTrechos }) => {
 
@@ -10,33 +11,8 @@ const TrechosRecentes = ({trechos, carregando, onAtualizarTrechos }) => {
   if (!carregando && (!trechos?.ultimosTrechos || trechos.ultimosTrechos.length === 0)) {
     return null;
   }
-
-  const handleEncerrar = async(item)=>{
-    const hoje = new Date().toISOString();
-
-    const payload = {
-      nomeTrecho: item.nomeTrecho,
-      distancia: item.distancia,
-      inicio: item.inicio,
-      fim: hoje,
-      data: item.data
-    }
-    const confirmar = window.confirm('Deseja encerrar este trecho?');
-    if(!confirmar) return
-
-    try {
-      const response = await api.put(`/editar-trecho/${item._id}`, payload);
-      console.log(response.data);
-      alert('Trecho encerrado com sucesso');
-
-        if (typeof onAtualizarTrechos === "function") {
-        onAtualizarTrechos();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
+  
+  const {handleEncerrar} = useEncerrarTrecho({onAtualizarTrechos})
 
   return (
     <div className='container'>
@@ -54,7 +30,13 @@ const TrechosRecentes = ({trechos, carregando, onAtualizarTrechos }) => {
               <Timer size={16} style={{ marginRight: 6 }} />
               {duracaoFormatada(item.inicio, item.fim, item.distancia)}
             </p>
-            <button className='botao-principal' onClick={()=>handleEncerrar(item)}><MapPinCheckInside /> Encerrar</button>
+            <button
+              className='botao-principal'
+              onClick={() => handleEncerrar(item)}
+              disabled={!!item.fim}>
+              <MapPinCheckInside /> 
+              Encerrar
+              </button>
         </div>
         ))}
       </div>
