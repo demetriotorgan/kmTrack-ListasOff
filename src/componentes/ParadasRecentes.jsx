@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Hourglass,Hand } from "lucide-react";
+import { Hourglass,Hand,ThumbsUp } from "lucide-react";
 import Carregando from './Carregando';
 import { duracaoParada, isoToHHMM } from '../util/time';
 import api from '../api/api';
@@ -48,7 +48,12 @@ const [encerrandoParada, setEncerrandoParada] = useState(false);
     <p className="info-recente"><strong>Tipo:</strong> {item.tipo}</p>  
     <p className="info-recente"><strong>Início:</strong> {isoToHHMM(item.horaInicio)}</p>  
     <p className='info-recente'><strong>Duração:</strong> {duracaoParada(item.horaInicio, item.horaFinal)}</p>
-    <button className='botao-principal' onClick={()=>handleEncerrar(item)}>Encerrar</button>
+    <button 
+      className='botao-principal' 
+      onClick={()=>handleEncerrar(item)}
+      disabled={!!item.horaFinal}>
+      <ThumbsUp />Encerrar
+      </button>
   </div>
 ))}
     </div>
