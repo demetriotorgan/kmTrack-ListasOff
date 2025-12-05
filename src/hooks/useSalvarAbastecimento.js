@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../api/api";
 import { dateToIso, isoToDateEdit } from "../util/time";
+import { triggerRefresh } from "../util/refreshEvent";
 
 export function useSalvarAbastecimento({setList}){
 const hojeISO = new Date().toISOString();
@@ -39,6 +40,7 @@ const abastecimentoInicial = {
 
       const payload = criarPayload();
       const response = await api.post('/salvar-abastecimento', payload);
+      triggerRefresh();
 
       if(!response.data.offline){
         setList((prev) => [response.data.abastecimento, ...prev]);

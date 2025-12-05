@@ -6,6 +6,7 @@ import api from '../api/api';
 import { useEntityList } from '../hooks/useEntityList';
 import ModalCarregamento from '../componentes/ModalCarregamento';
 import { useSalvarAbastecimento } from '../hooks/useSalvarAbastecimento';
+import { triggerRefresh } from '../util/refreshEvent';
 
 const Abastecimento = () => {
   const [excluindo, setExcluindo] = useState(false);
@@ -40,6 +41,8 @@ const Abastecimento = () => {
     const response = await api.delete(`/deletar-abastecimento/${item._id}`);
     console.log(response.data);
     alert('Regsitro excluido com sucesso');
+    triggerRefresh();
+
     setList((prev) => prev.filter((p) => p._id !== item._id));
   } catch (error) {
     console.log(error);

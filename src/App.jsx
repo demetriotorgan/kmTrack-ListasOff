@@ -21,7 +21,11 @@ import { useParadasRecentes } from './hooks/useParadasRecentes'
 
 function App() {
   const [selected, setSelected] = useState(''); 
-  
+  const[carregandoAbastecimentos, setCarregandoAbastecimentos] = useState(false);
+  const [abastecimentos, setAbastecimentos] = useState({
+  ultimosAbastecimentos: [],
+  totalValor: 0
+  });  
   
   const { trechos,carregando,carregarTrechos} = useTrechoRecentes();
   const {pedagios, carregandoPedagios, carregarPedagios} = usePedagiosRecentes();
@@ -33,15 +37,30 @@ function App() {
     setSelected(value);
   };  
 
+  const carregarAbastecimentos = async()=>{
+  try {
+    const response = await api.get('/abastecimentos-recentes');
+    setAbastecimentos(response.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
   useEffect(() => {
   const unsub = subscribeRefresh(() => {
     carregarTrechos();
     carregarPedagios();
     carregarParadas();
+    carregarAbastecimentos();
   });
   return unsub;
-}, [carregarTrechos,carregarPedagios,carregarParadas]);
+}, [carregarTrechos,carregarPedagios,carregarParadas,carregarAbastecimentos]);
 
+
+useEffect(()=>{
+carregarAbastecimentos();
+},[])
 
   return (
     <>
@@ -72,7 +91,10 @@ function App() {
       onAtualizarParada={carregarParadas}
       />
 
-      <AbastecimentosRecentes />
+      <AbastecimentosRecentes
+      abastecimentos={abastecimentos}
+      carregandoAbastecimentos={carregandoAbastecimentos}
+      />
       </>
       )}
       
