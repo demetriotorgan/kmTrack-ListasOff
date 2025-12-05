@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { dateToIso, hhmmToIso, isoToDateEdit, isoToHHMM } from "../util/time";
 import api from "../api/api";
+import { triggerRefresh } from "../util/refreshEvent";
 
 export function useEditarTrecho({ setList, setFormState, trechoInicial }) {
   
@@ -48,6 +49,8 @@ export function useEditarTrecho({ setList, setFormState, trechoInicial }) {
 
     try {
       const { data } = await api.put(`/editar-trecho/${idEditado}`, payload);
+      triggerRefresh();
+      
 
       setList(prev => prev.map(item =>
         item._id === idEditado ? data.trecho : item

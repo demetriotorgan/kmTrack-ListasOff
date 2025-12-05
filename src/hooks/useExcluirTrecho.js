@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api/api";
+import { triggerRefresh } from "../util/refreshEvent";
 
 export function useExcluirTrecho({ setList }) {
   const [excluindo, setExcluindo] = useState(false);
@@ -23,6 +24,8 @@ export function useExcluirTrecho({ setList }) {
       console.log("📤 [EXCLUIR] Enviando DELETE para API...");
 
       const response = await api.delete(`/deletar-trecho/${item._id}`);
+      triggerRefresh();
+      
 
       console.log("🟢 [EXCLUIR] Resposta da API:", response.data);
 

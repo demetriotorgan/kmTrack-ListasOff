@@ -1,13 +1,40 @@
 import React from 'react'
 import Carregando from './Carregando'
-import { Flag, Map, Timer,Gauge   } from "lucide-react";
-import { duracaoFormatada, isoToHHMM } from '../util/time';
+import { Flag, Map, Timer,MapPinCheckInside  } from "lucide-react";
+import { duracaoFormatada, hhmmToIso, isoToHHMM } from '../util/time';
+import api from '../api/api';
 
-const TrechosRecentes = ({trechos, carregando}) => {
+const TrechosRecentes = ({trechos, carregando, onAtualizarTrechos }) => {
 
   // ⛔ Só mostra enquanto não está carregando e não tem dados
   if (!carregando && (!trechos?.ultimosTrechos || trechos.ultimosTrechos.length === 0)) {
     return null;
+  }
+
+  const handleEncerrar = async(item)=>{
+    const hoje = new Date().toISOString();
+
+    const payload = {
+      nomeTrecho: item.nomeTrecho,
+      distancia: item.distancia,
+      inicio: item.inicio,
+      fim: hoje,
+      data: item.data
+    }
+    const confirmar = window.confirm('Deseja encerrar este trecho?');
+    if(!confirmar) return
+
+    try {
+      const response = await api.put(`/editar-trecho/${item._id}`, payload);
+      console.log(response.data);
+      alert('Trecho encerrado com sucesso');
+
+        if (typeof onAtualizarTrechos === "function") {
+        onAtualizarTrechos();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 
@@ -27,6 +54,7 @@ const TrechosRecentes = ({trechos, carregando}) => {
               <Timer size={16} style={{ marginRight: 6 }} />
               {duracaoFormatada(item.inicio, item.fim, item.distancia)}
             </p>
+            <button className='botao-principal' onClick={()=>handleEncerrar(item)}><MapPinCheckInside /> Encerrar</button>
         </div>
         ))}
       </div>

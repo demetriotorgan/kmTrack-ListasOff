@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { HandCoins, BadgeDollarSign,Coins } from "lucide-react";
+import { HandCoins, BadgeDollarSign,Coins ,Signpost} from "lucide-react";
 import api from '../api/api'
 import Carregando from './Carregando';
 import { formatarMoeda } from '../util/moeda';
@@ -40,7 +40,7 @@ const PedagiosRecentes = () => {
 
 {pedagios.ultimosPedagios?.map((item) => (
   <div className="card-recente" key={item._id}>
-    <p className="titulo-recente">{item.local}</p>
+    <p className="titulo-recente"><Signpost />{item.local}</p>
     <p className="info-recente"><strong>Valor:</strong> <Coins /> {formatarMoeda(item.valor)}</p>
     <p className='info-recente'><strong>Data:</strong> {new Date(item.data).toLocaleDateString()}</p>
   </div>

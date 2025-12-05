@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { dateToIso, hhmmToIso, isoToDateEdit, isoToHHMM } from "../util/time";
 import api from "../api/api";
+import { triggerRefresh } from "../util/refreshEvent";
 
 export function useSalvarTrecho({ setList }) {
 const hojeISO = new Date().toISOString();
@@ -70,6 +71,7 @@ const hojeISO = new Date().toISOString();
 
       const payload = criarPayload();
       const response = await api.post("/salvar-trecho", payload);
+      triggerRefresh();
 
       /* =====================
          ONLINE
