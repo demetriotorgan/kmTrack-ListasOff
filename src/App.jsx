@@ -69,6 +69,7 @@ function App() {
       <ParadasRecentes 
       paradas={paradas}
       carregandoParadas={carregandoParadas}
+      onAtualizarParada={carregarParadas}
       />
 
       <AbastecimentosRecentes />
