@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { dateToIso, isoToDateEdit } from "../util/time";
 import api from "../api/api";
+import { triggerRefresh } from "../util/refreshEvent";
 
 export function useSalvarPedagio({ setList }) {
 
@@ -54,7 +55,7 @@ export function useSalvarPedagio({ setList }) {
 
       const payload = criarPayload();
       const response = await api.post("/salvar-pedagio", payload);
-
+      triggerRefresh();
       /* =====================
          ONLINE
       ===================== */

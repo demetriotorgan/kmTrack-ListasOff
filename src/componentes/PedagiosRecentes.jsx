@@ -4,32 +4,8 @@ import api from '../api/api'
 import Carregando from './Carregando';
 import { formatarMoeda } from '../util/moeda';
 
-const PedagiosRecentes = () => {
-  const [pedagios, setPedagios] = useState({
-  ultimosPedagios: [],
-  totalValor: 0
-  });
-  const[carregandoPedagios, setCarregandoPedagios] = useState(false);
-
-  const carregarPedagios = async()=>{
-    setCarregandoPedagios(true);
-    try {
-    const response = await api.get('/pedagios-recentes');
-    console.log(response.data);
-    setPedagios(response.data);  
-    } catch (error) {
-      console.log(error);
-    }finally{
-      setCarregandoPedagios(false);
-    }    
-  };
-
-  useEffect(()=>{
-    carregarPedagios();
-  },[]);
-
-
-
+const PedagiosRecentes = ({pedagios, carregandoPedagios}) => {
+  
   return (
     <div className='container'>
         <h2><HandCoins /> Pedágios Recentes</h2>

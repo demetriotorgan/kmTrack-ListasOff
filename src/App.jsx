@@ -15,11 +15,14 @@ import PedagiosRecentes from './componentes/PedagiosRecentes'
 import ParadasRecentes from './componentes/ParadasRecentes'
 import AbastecimentosRecentes from './componentes/AbastecimentosRecentes'
 import { subscribeRefresh } from './util/refreshEvent'
+import { usePedagiosRecentes } from './hooks/usePedagiosRecentes'
 
 function App() {
   const [selected, setSelected] = useState(''); 
   
   const { trechos,carregando,carregarTrechos} = useTrechoRecentes();
+  const {pedagios, carregandoPedagios, carregarPedagios} = usePedagiosRecentes();
+
   const online = useOnlineStatus(carregarTrechos);
   
   const handleSelectChange = (value) => {
@@ -29,9 +32,10 @@ function App() {
   useEffect(() => {
   const unsub = subscribeRefresh(() => {
     carregarTrechos();
+    carregarPedagios();
   });
   return unsub;
-}, [carregarTrechos]);
+}, [carregarTrechos,carregarPedagios]);
 
   return (
     <>
@@ -51,7 +55,11 @@ function App() {
       carregando={carregando}
       onAtualizarTrechos={carregarTrechos}
       />
-      <PedagiosRecentes />
+      <PedagiosRecentes
+      pedagios={pedagios}
+      carregandoPedagios={carregandoPedagios}      
+      />
+
       <ParadasRecentes />
       <AbastecimentosRecentes />
       </>
