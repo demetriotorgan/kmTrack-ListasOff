@@ -18,50 +18,31 @@ import { subscribeRefresh } from './util/refreshEvent'
 import { usePedagiosRecentes } from './hooks/usePedagiosRecentes'
 import api from './api/api'
 import { useParadasRecentes } from './hooks/useParadasRecentes'
+import { useAbastecimentosRecentes } from './hooks/useAbastecimentosRecentes'
 
 function App() {
-  const [selected, setSelected] = useState(''); 
-  const[carregandoAbastecimentos, setCarregandoAbastecimentos] = useState(false);
-  const [abastecimentos, setAbastecimentos] = useState({
-  ultimosAbastecimentos: [],
-  totalValor: 0
-  });  
-  
-  const { trechos,carregando,carregarTrechos} = useTrechoRecentes();
-  const {pedagios, carregandoPedagios, carregarPedagios} = usePedagiosRecentes();
-  const {paradas, carregandoParadas, carregarParadas} = useParadasRecentes();
+  const [selected, setSelected] = useState('');
 
+  const { trechos, carregando, carregarTrechos } = useTrechoRecentes();
+  const { pedagios, carregandoPedagios, carregarPedagios } = usePedagiosRecentes();
+  const { paradas, carregandoParadas, carregarParadas } = useParadasRecentes();
+  const {carregandoAbastecimentos, abastecimentos, carregarAbastecimentos} = useAbastecimentosRecentes();
   const online = useOnlineStatus(carregarTrechos);
-  
+
   const handleSelectChange = (value) => {
     setSelected(value);
-  };  
-
-  const carregarAbastecimentos = async()=>{
-  try {
-    const response = await api.get('/abastecimentos-recentes');
-    setAbastecimentos(response.data);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
+  };
 
   useEffect(() => {
-  const unsub = subscribeRefresh(() => {
-    carregarTrechos();
-    carregarPedagios();
-    carregarParadas();
-    carregarAbastecimentos();
-  });
-  return unsub;
-}, [carregarTrechos,carregarPedagios,carregarParadas,carregarAbastecimentos]);
-
-
-useEffect(()=>{
-carregarAbastecimentos();
-},[])
-
+    const unsub = subscribeRefresh(() => {
+      carregarTrechos();
+      carregarPedagios();
+      carregarParadas();
+      carregarAbastecimentos();
+    });
+    return unsub;
+  }, [carregarTrechos, carregarPedagios, carregarParadas, carregarAbastecimentos]);
+  
   return (
     <>
       <NavBar />
@@ -75,31 +56,31 @@ carregarAbastecimentos();
 
       {online && selected === '' && (
         <>
-      <TrechosRecentes 
-      trechos={trechos}
-      carregando={carregando}
-      onAtualizarTrechos={carregarTrechos}
-      />
-      <PedagiosRecentes
-      pedagios={pedagios}
-      carregandoPedagios={carregandoPedagios}      
-      />
+          <TrechosRecentes
+            trechos={trechos}
+            carregando={carregando}
+            onAtualizarTrechos={carregarTrechos}
+          />
+          <PedagiosRecentes
+            pedagios={pedagios}
+            carregandoPedagios={carregandoPedagios}
+          />
 
-      <ParadasRecentes 
-      paradas={paradas}
-      carregandoParadas={carregandoParadas}
-      onAtualizarParada={carregarParadas}
-      />
+          <ParadasRecentes
+            paradas={paradas}
+            carregandoParadas={carregandoParadas}
+            onAtualizarParada={carregarParadas}
+          />
 
-      <AbastecimentosRecentes
-      abastecimentos={abastecimentos}
-      carregandoAbastecimentos={carregandoAbastecimentos}
-      />
-      </>
+          <AbastecimentosRecentes
+            abastecimentos={abastecimentos}
+            carregandoAbastecimentos={carregandoAbastecimentos}
+          />
+        </>
       )}
-      
+
       {!online && selected === '' && (
-         <p className="offline-msg">Sem conexão — dados recentes indisponíveis</p>
+        <p className="offline-msg">Sem conexão — dados recentes indisponíveis</p>
       )}
       <Footer />
     </>
