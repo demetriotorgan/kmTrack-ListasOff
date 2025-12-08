@@ -1,14 +1,16 @@
 import { useState } from "react";
 import api from "../api/api";
-import { dateToIso } from "../util/time";
+import { dateToIso, isoToDateEdit } from "../util/time";
 import { triggerRefresh } from "../util/refreshEvent";
 
 export function useSalvarCusto({setList}){
+const hojeISO = new Date().toISOString();
+
 const custoInicial = {
   descricao:'',
   valor:'',
   tipo:'debito',
-  data:''
+  data: isoToDateEdit(hojeISO)
 }
 
 const [dadosCusto, setDadosCusto] = useState(custoInicial);
