@@ -2,7 +2,7 @@
 
 let db = null;
 const DB_NAME = "travelAppDB";
-const DB_VERSION = 5;
+const DB_VERSION = 6;
 
 /**
  * Todas as stores usadas pelo app.
@@ -13,12 +13,14 @@ export const STORES_CONFIG = [
   { name: "paradasPendentes", keyPath: "idTemp" },
   { name: "pedagiosPendentes", keyPath: "idTemp" },
   { name: "abastecimentosPendentes", keyPath: "idTemp" },
+  { name: "custosPendentes", keyPath: "idTemp" }, 
 
   // cache offline de GETs
   { name: "cacheTrechos", keyPath: "id" },
   { name: "cacheParadas", keyPath: "id" },
   { name: "cachePedagios", keyPath: "id" },
-  { name: "cacheAbastecimentos", keyPath: "id" }
+  { name: "cacheAbastecimentos", keyPath: "id" },
+  { name: "cacheCustos", keyPath: "id" }   
 ];
 
 /* -------------------------------------------------------------

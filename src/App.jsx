@@ -19,6 +19,7 @@ import { usePedagiosRecentes } from './hooks/usePedagiosRecentes'
 import api from './api/api'
 import { useParadasRecentes } from './hooks/useParadasRecentes'
 import { useAbastecimentosRecentes } from './hooks/useAbastecimentosRecentes'
+import Custos from './componentes/Custos'
 
 function App() {
   const [selected, setSelected] = useState('');
@@ -53,6 +54,7 @@ function App() {
       {selected === 'parada' && <Parada />}
       {selected === 'pedagio' && <Pedagio />}
       {selected === 'abastecimento' && <Abastecimento />}
+      {selected === 'custos' && <Custos />}
 
       {online && selected === '' && (
         <>

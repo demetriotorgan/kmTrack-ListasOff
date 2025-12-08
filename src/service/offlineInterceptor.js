@@ -5,6 +5,7 @@ export const STORES = {
   PARADA: "paradasPendentes",
   PEDAGIO: "pedagiosPendentes",
   ABASTECIMENTO: "abastecimentosPendentes",
+  CUSTO: "custosPendentes",
 };
 
 export const ROUTES = [
@@ -12,6 +13,7 @@ export const ROUTES = [
   { r: /^\/salvar-parada/, store: STORES.PARADA },
   { r: /^\/salvar-pedagio/, store: STORES.PEDAGIO },
   { r: /^\/salvar-abastecimento/, store: STORES.ABASTECIMENTO },
+  { r: /^\/salvar-custo/, store: STORES.CUSTO }, 
 ];
 
 function findStore(url) {
@@ -24,6 +26,7 @@ function listStore(url) {
   if (url.includes("listar-parada")) return "cacheParadas";
   if (url.includes("listar-pedagio")) return "cachePedagios";
   if (url.includes("listar-abastecimento")) return "cacheAbastecimentos";
+  if (url.includes("listar-custos")) return "cacheCustos";
   return null;
 }
 

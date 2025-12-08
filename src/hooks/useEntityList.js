@@ -7,6 +7,7 @@ const ENTITY_CONFIG = {
   paradas: { store: "cacheParadas", endpoint: "/listar-parada" },
   pedagios: { store: "cachePedagios", endpoint: "/listar-pedagio" },
   abastecimentos: { store: "cacheAbastecimentos", endpoint: "/listar-abastecimentos" },
+  custos: { store: "cacheCustos", endpoint: "/listar-custos" },
 };
 
 export function useEntityList(entityName) {

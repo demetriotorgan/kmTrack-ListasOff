@@ -12,6 +12,7 @@ const Menu = ({onChangeOption}) => {
             <option value="pedagio">Pedágio</option>
             <option value="parada">Parada</option>            
             <option value="abastecimento">Abastecimento</option>
+            <option value="custos">Custos</option>
         </select>
     </div>
   )
