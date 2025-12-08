@@ -19,16 +19,21 @@ import { usePedagiosRecentes } from './hooks/usePedagiosRecentes'
 import api from './api/api'
 import { useParadasRecentes } from './hooks/useParadasRecentes'
 import { useAbastecimentosRecentes } from './hooks/useAbastecimentosRecentes'
+import CustosRecentes from './componentes/CustosRecentes'
 import Custos from './componentes/Custos'
+import { useCustoRecentes } from './hooks/useCustoRecentes'
 
 function App() {
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState('');  
 
   const { trechos, carregando, carregarTrechos } = useTrechoRecentes();
   const { pedagios, carregandoPedagios, carregarPedagios } = usePedagiosRecentes();
   const { paradas, carregandoParadas, carregarParadas } = useParadasRecentes();
   const {carregandoAbastecimentos, abastecimentos, carregarAbastecimentos} = useAbastecimentosRecentes();
+  const {custos, carregandoCustos, carregarCustos} = useCustoRecentes();
+
   const online = useOnlineStatus(carregarTrechos);
+  
 
   const handleSelectChange = (value) => {
     setSelected(value);
@@ -40,10 +45,11 @@ function App() {
       carregarPedagios();
       carregarParadas();
       carregarAbastecimentos();
+      carregarCustos();
     });
     return unsub;
-  }, [carregarTrechos, carregarPedagios, carregarParadas, carregarAbastecimentos]);
-  
+  }, [carregarTrechos, carregarPedagios, carregarParadas, carregarAbastecimentos, carregarCustos]);
+
   return (
     <>
       <NavBar />
@@ -58,26 +64,32 @@ function App() {
 
       {online && selected === '' && (
         <>
-          <TrechosRecentes
-            trechos={trechos}
-            carregando={carregando}
-            onAtualizarTrechos={carregarTrechos}
-          />
-          <PedagiosRecentes
-            pedagios={pedagios}
-            carregandoPedagios={carregandoPedagios}
-          />
-
-          <ParadasRecentes
-            paradas={paradas}
-            carregandoParadas={carregandoParadas}
-            onAtualizarParada={carregarParadas}
+          <CustosRecentes 
+          custos={custos}
+          carregandoCustos={carregandoCustos}
           />
 
           <AbastecimentosRecentes
             abastecimentos={abastecimentos}
             carregandoAbastecimentos={carregandoAbastecimentos}
           />
+
+          <PedagiosRecentes
+            pedagios={pedagios}
+            carregandoPedagios={carregandoPedagios}
+          />
+
+          <TrechosRecentes
+            trechos={trechos}
+            carregando={carregando}
+            onAtualizarTrechos={carregarTrechos}
+          />          
+
+          <ParadasRecentes
+            paradas={paradas}
+            carregandoParadas={carregandoParadas}
+            onAtualizarParada={carregarParadas}
+          />          
         </>
       )}
 

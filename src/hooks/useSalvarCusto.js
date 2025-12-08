@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../api/api";
 import { dateToIso } from "../util/time";
+import { triggerRefresh } from "../util/refreshEvent";
 
 export function useSalvarCusto({setList}){
 const custoInicial = {
@@ -32,6 +33,8 @@ const handleSalvarCusto = async()=>{
   try {
     setSalvandoCusto(true);
     const response = await api.post('/salvar-custo', payload);
+    triggerRefresh();
+    
     // console.log(response.data);    
     
 
