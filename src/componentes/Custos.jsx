@@ -5,6 +5,8 @@ import api from '../api/api';
 import ModalCarregamento from './ModalCarregamento';
 import { useSalvarCusto } from '../hooks/useSalvarCusto';
 import { useEntityList } from '../hooks/useEntityList';
+import { triggerRefresh } from '../util/refreshEvent';
+import { useExcluirCusto } from '../hooks/useExcluirCusto';
 
 const Custos = () => {
   const {
@@ -15,8 +17,7 @@ const Custos = () => {
 } = useEntityList("custos");   
 
 const {dadosCusto, salvandoCusto, handleDadosCusto, handleSalvarCusto} = useSalvarCusto({setList});
-
-
+const {handleExcluir} = useExcluirCusto({setList});
   return (
     <>
     <div className='container'>
@@ -78,7 +79,7 @@ const {dadosCusto, salvandoCusto, handleDadosCusto, handleSalvarCusto} = useSalv
 
             <button
               className="botao-atencao"
-              // onClick={()=>handleExcluir(item)}
+              onClick={()=>handleExcluir(item)}
             >
               Excluir <Trash2 />
             </button>
