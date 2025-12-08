@@ -17,11 +17,11 @@ const Custos = () => {
 } = useEntityList("custos");   
 
 const {dadosCusto, salvandoCusto, handleDadosCusto, handleSalvarCusto} = useSalvarCusto({setList});
-const {handleExcluir} = useExcluirCusto({setList});
+const {excluindoCusto, handleExcluir} = useExcluirCusto({setList});
   return (
     <>
     <div className='container'>
-      {salvandoCusto && <ModalCarregamento label='Salvando' />}
+      {(salvandoCusto || excluindoCusto) && <ModalCarregamento label={salvandoCusto ? 'Salvando' : 'Excluindo'} />}
         <h2>Gastos e Custos</h2>
         <label>
           Descrição

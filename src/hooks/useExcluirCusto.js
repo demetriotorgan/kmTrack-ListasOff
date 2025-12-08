@@ -1,7 +1,9 @@
+import { useState } from "react";
 import api from "../api/api";
 import { triggerRefresh } from "../util/refreshEvent";
 
 export function useExcluirCusto({setList}){
+    const [excluindoCusto, setExcluindoCusto] = useState(false);
 
 const handleExcluir = async(item)=>{
   // ▶️ 1. Verificação imediata OFFLINE
@@ -16,6 +18,7 @@ const handleExcluir = async(item)=>{
   if(!confirmar) return
 
   try {
+    setExcluindoCusto(true);
     const response = await api.delete(`/deletar-custo/${item._id}`);
     console.log(response.data);
     alert('Registro excluido com sucesso');
@@ -23,10 +26,13 @@ const handleExcluir = async(item)=>{
     triggerRefresh();
   } catch (error) {
     console.log(error);
+  }finally{
+    setExcluindoCusto(false);
   }
 }
 
     return{
+        excluindoCusto,
         handleExcluir        
     }
 }
