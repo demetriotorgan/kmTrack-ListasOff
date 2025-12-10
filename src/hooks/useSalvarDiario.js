@@ -8,6 +8,7 @@ export function useSalvarDiario({carregarDiario}) {
     const [titulo, setTitulo] = useState('');
     const [texto, setTexto] = useState('');
     const [data, setData] = useState(isoToDateEdit(hojeISO));
+    const [salvando, setSalvando] = useState(false);
 
     const handleSalvarDiario = async()=>{        
         const payload = {
@@ -20,6 +21,7 @@ export function useSalvarDiario({carregarDiario}) {
         if(!confirmar) return
 
         try {
+            setSalvando(true);
             const response = await api.post('/salvar-diario', payload);
             console.log(response.data);
             alert('Registro Salvo com sucesso');
@@ -28,6 +30,8 @@ export function useSalvarDiario({carregarDiario}) {
             carregarDiario();
         } catch (error) {
             console.log(error);
+        }finally{
+            setSalvando(false);
         }
     };
 
@@ -38,6 +42,7 @@ export function useSalvarDiario({carregarDiario}) {
         setTexto,
         data,
         setData,
-        handleSalvarDiario
+        handleSalvarDiario,
+        salvando
     }
 }

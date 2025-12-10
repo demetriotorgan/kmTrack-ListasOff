@@ -7,7 +7,7 @@ import { useExcluirDiario } from '../hooks/useExcluirDiario';
 
 const Diario = () => {
     const { loading, diarios, carregarDiario } = useCarregarDiario();
-    const { titulo, setTitulo, texto, setTexto, data, setData, handleSalvarDiario } = useSalvarDiario({ carregarDiario });
+    const { titulo, setTitulo, texto, setTexto, data, setData, handleSalvarDiario,salvando } = useSalvarDiario({ carregarDiario });
     const {excluindo, handleExcluir} = useExcluirDiario({carregarDiario});
 
     return (
@@ -46,7 +46,7 @@ const Diario = () => {
             </div>
 
             <div className="diario">
-                {(loading || excluindo) && <ModalCarregamento label="Carregando" />}
+                {(loading || excluindo || salvando) && <ModalCarregamento label="Carregando" />}
                 <h2>Diários Salvos</h2>
 
                 {Array.isArray(diarios) && diarios.map((item, index) => (
