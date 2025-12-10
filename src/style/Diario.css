@@ -1,3 +1,7 @@
+.diario{
+  margin-top: 20px;
+}
+
 .diario-card {
   background: var(--color-secondary);
   border: 2px solid var(--color-border);
