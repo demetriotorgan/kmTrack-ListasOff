@@ -1,0 +1,41 @@
+.diario-card {
+  background: var(--color-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 20px;  
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.diario-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.diario-data {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  color: var(--color-border);
+}
+
+.botao-excluir {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.botao-excluir:hover {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}

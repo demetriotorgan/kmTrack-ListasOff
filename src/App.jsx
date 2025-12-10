@@ -22,9 +22,12 @@ import { useAbastecimentosRecentes } from './hooks/useAbastecimentosRecentes'
 import CustosRecentes from './componentes/CustosRecentes'
 import Custos from './componentes/Custos'
 import { useCustoRecentes } from './hooks/useCustoRecentes'
+import Diario from './componentes/Diario'
+import { File } from 'lucide-react'
 
 function App() {
   const [selected, setSelected] = useState('');  
+  const [onDiario, setOnDiario] = useState(false);
 
   const { trechos, carregando, carregarTrechos } = useTrechoRecentes();
   const { pedagios, carregandoPedagios, carregarPedagios } = usePedagiosRecentes();
@@ -49,6 +52,10 @@ function App() {
     });
     return unsub;
   }, [carregarTrechos, carregarPedagios, carregarParadas, carregarAbastecimentos, carregarCustos]);
+
+  const handleDiario = ()=>{
+    setOnDiario(!onDiario);
+  }
 
   return (
     <>
@@ -89,7 +96,12 @@ function App() {
             paradas={paradas}
             carregandoParadas={carregandoParadas}
             onAtualizarParada={carregarParadas}
-          />          
+          />
+
+          <div className='container'>
+            <button className='botao-principal' onClick={handleDiario}><File />Diário de Bordo</button>
+            {onDiario && <Diario />}
+          </div>          
         </>
       )}
 
